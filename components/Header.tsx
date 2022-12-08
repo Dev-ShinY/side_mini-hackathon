@@ -2,7 +2,11 @@
 import styled from "styled-components";
 import { faSun, faMoon } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { darkModeVar, disableDarkMode, enableDarkMode } from "../apollo";
+import {
+  darkModeVar,
+  disableDarkMode,
+  enableDarkMode,
+} from "../src/utils/apollo";
 import { useReactiveVar } from "@apollo/client";
 
 export default function Header() {

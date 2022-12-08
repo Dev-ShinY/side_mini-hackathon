@@ -6,13 +6,34 @@ import { Collapse, Radio, Button } from "antd";
 import type { RadioChangeEvent } from "antd";
 import { useState } from "react";
 import { Map, MapMarker } from "react-kakao-maps-sdk";
+import { gql } from "@apollo/client";
+import { useUpsertNeedsMutation } from "../src/utils/client";
+
+gql`
+  mutation upsertNeeds($input: UpdateNeedsInput!) {
+    upsertNeeds(input: $input) {
+      date
+      kor
+      chn
+      jpn
+      west
+    }
+  }
+
+  query getNeeds($input: String!) {
+    getNeeds(input: $input) {
+      date
+      kor
+      chn
+      jpn
+      west
+    }
+  }
+`;
 
 export default function Home() {
   const [lunchType, setLunchType] = useState("lunch");
   const [placeType, setPlaceType] = useState("outSide");
-
-  // collapse
-  const { Panel } = Collapse;
 
   // filter
   const optionsLunchType = [
@@ -52,6 +73,8 @@ export default function Home() {
     { title: "분식", value: 0 },
   ]);
 
+  // apollo
+  const [upsertNeeds, { loading }] = useUpsertNeedsMutation();
   return (
     <SContent>
       <STitle> Filter </STitle>
@@ -173,6 +196,39 @@ export default function Home() {
                   </SNeedsDecision>
                 ))}
               </SNeeds>
+              <Button
+                onClick={async () => {
+                  await upsertNeeds({
+                    variables: {
+                      input: {
+                        date:
+                          new Date().getFullYear() +
+                          "-" +
+                          ("0" + (new Date().getMonth() + 1)).slice(-2) +
+                          "-" +
+                          ("0" + new Date().getDate()).slice(-2),
+                        kor: needsList.filter(function (item) {
+                          return item.title === "한식";
+                        })[0].value,
+                        chn: needsList.filter(function (item) {
+                          return item.title === "중식";
+                        })[0].value,
+                        jpn: needsList.filter(function (item) {
+                          return item.title === "일식";
+                        })[0].value,
+                        west: needsList.filter(function (item) {
+                          return item.title === "분식";
+                        })[0].value,
+                      },
+                    },
+                    onCompleted(data) {
+                      console.log("success!!", data);
+                    },
+                  });
+                }}
+              >
+                Submit
+              </Button>
             </div>
           </CollapseBody>
         </CollapsePanel>
@@ -290,10 +346,14 @@ const SNeedsDecisionBtn = styled.div`
 `;
 
 // map
-const SMap = styled(BaseBox)`
+const SMapContainer = styled(BaseBox)`
   width: 95%;
   height: 100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   border-radius: 10px;
+`;
+
+const SMapPointList = styled.div`
+  width: 30%;
 `;
