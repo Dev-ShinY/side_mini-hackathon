@@ -56,126 +56,133 @@ export default function Home() {
     <SContent>
       <STitle> Filter </STitle>
       <Collapse style={{ width: "95%" }} defaultActiveKey={["1"]}>
-        <Panel header="Filter" key="1">
-          <div style={{ display: "flex", flexDirection: "row" }}>
-            {/* filter */}
-            <SFilter>
-              <SfilterTitle>옵션</SfilterTitle>
-              <SFilterOption>
-                <Radio.Group
-                  options={optionsLunchType}
-                  onChange={onChangeLunchType}
-                  optionType="button"
-                  style={{ marginRight: "20px" }}
-                  value={lunchType}
-                />
+        <CollapsePanel header="Filter" key="1">
+          <CollapseBody>
+            <div style={{ display: "flex", flexDirection: "row" }}>
+              {/* filter */}
+              <SFilter>
+                <SfilterTitle>옵션</SfilterTitle>
+                <SFilterOption>
+                  <Radio.Group
+                    options={optionsLunchType}
+                    onChange={onChangeLunchType}
+                    optionType="button"
+                    style={{ marginRight: "20px" }}
+                    value={lunchType}
+                  />
 
-                <Radio.Group
-                  options={optionsPlaceType}
-                  onChange={onChangePlaceType}
-                  optionType="button"
-                  value={placeType}
-                />
-              </SFilterOption>
-            </SFilter>
+                  <Radio.Group
+                    options={optionsPlaceType}
+                    onChange={onChangePlaceType}
+                    optionType="button"
+                    value={placeType}
+                  />
+                </SFilterOption>
+              </SFilter>
 
-            {/* needs */}
-            <SNeeds>
-              {needsList.map((item) => (
-                <SNeedsDecision key={item.title}>
-                  <SNeedsDecisionTitle>{item.title}</SNeedsDecisionTitle>
+              {/* needs */}
+              <SNeeds>
+                {needsList.map((item) => (
+                  <SNeedsDecision key={item.title}>
+                    <SNeedsDecisionTitle>{item.title}</SNeedsDecisionTitle>
 
-                  <SNeedsDecisionBtn>
-                    <span>별론데..</span>
-                    <Button
-                      value={-2}
-                      shape="circle"
-                      size={"middle"}
-                      style={{
-                        backgroundColor: item.value == -2 ? "#ff4d4f" : "white",
-                        border: "1px solid #ff4d4f",
-                      }}
-                      onClick={(e) =>
-                        onClickNeeds(
-                          (e.target as HTMLButtonElement).value,
-                          item.title
-                        )
-                      }
-                    />
-                    <Button
-                      value={-1}
-                      shape="circle"
-                      size={"small"}
-                      style={{
-                        backgroundColor: item.value == -1 ? "#ff4d4f" : "white",
-                        border: "1px solid #ff4d4f",
-                      }}
-                      onClick={(e) =>
-                        onClickNeeds(
-                          (e.target as HTMLButtonElement).value,
-                          item.title
-                        )
-                      }
-                    />
-                    <Button
-                      value={0}
-                      shape="circle"
-                      size={"small"}
-                      style={{
-                        backgroundColor: item.value == 0 ? "#dedede" : "white",
-                        border: "1px solid #dedede",
-                      }}
-                      onClick={(e) =>
-                        onClickNeeds(
-                          (e.target as HTMLButtonElement).value,
-                          item.title
-                        )
-                      }
-                    />
-                    <Button
-                      value={1}
-                      shape="circle"
-                      size={"small"}
-                      style={{
-                        backgroundColor: item.value == 1 ? "#1890ff" : "white",
-                        border: "1px solid #1890ff",
-                      }}
-                      onClick={(e) =>
-                        onClickNeeds(
-                          (e.target as HTMLButtonElement).value,
-                          item.title
-                        )
-                      }
-                    />
-                    <Button
-                      value={2}
-                      shape="circle"
-                      size={"middle"}
-                      style={{
-                        backgroundColor: item.value == 2 ? "#1890ff" : "white",
-                        border: "1px solid #1890ff",
-                      }}
-                      onClick={(e) =>
-                        onClickNeeds(
-                          (e.target as HTMLButtonElement).value,
-                          item.title
-                        )
-                      }
-                    />
-                    <span>사랑해요..</span>
-                  </SNeedsDecisionBtn>
-                </SNeedsDecision>
-              ))}
-            </SNeeds>
-          </div>
-        </Panel>
+                    <SNeedsDecisionBtn>
+                      <span>별론데..</span>
+                      <Button
+                        value={-2}
+                        shape="circle"
+                        size={"middle"}
+                        style={{
+                          backgroundColor:
+                            item.value == -2 ? "#ff4d4f" : "white",
+                          border: "1px solid #ff4d4f",
+                        }}
+                        onClick={(e) =>
+                          onClickNeeds(
+                            (e.target as HTMLButtonElement).value,
+                            item.title
+                          )
+                        }
+                      />
+                      <Button
+                        value={-1}
+                        shape="circle"
+                        size={"small"}
+                        style={{
+                          backgroundColor:
+                            item.value == -1 ? "#ff4d4f" : "white",
+                          border: "1px solid #ff4d4f",
+                        }}
+                        onClick={(e) =>
+                          onClickNeeds(
+                            (e.target as HTMLButtonElement).value,
+                            item.title
+                          )
+                        }
+                      />
+                      <Button
+                        value={0}
+                        shape="circle"
+                        size={"small"}
+                        style={{
+                          backgroundColor:
+                            item.value == 0 ? "#dedede" : "white",
+                          border: "1px solid #dedede",
+                        }}
+                        onClick={(e) =>
+                          onClickNeeds(
+                            (e.target as HTMLButtonElement).value,
+                            item.title
+                          )
+                        }
+                      />
+                      <Button
+                        value={1}
+                        shape="circle"
+                        size={"small"}
+                        style={{
+                          backgroundColor:
+                            item.value == 1 ? "#1890ff" : "white",
+                          border: "1px solid #1890ff",
+                        }}
+                        onClick={(e) =>
+                          onClickNeeds(
+                            (e.target as HTMLButtonElement).value,
+                            item.title
+                          )
+                        }
+                      />
+                      <Button
+                        value={2}
+                        shape="circle"
+                        size={"middle"}
+                        style={{
+                          backgroundColor:
+                            item.value == 2 ? "#1890ff" : "white",
+                          border: "1px solid #1890ff",
+                        }}
+                        onClick={(e) =>
+                          onClickNeeds(
+                            (e.target as HTMLButtonElement).value,
+                            item.title
+                          )
+                        }
+                      />
+                      <span>사랑해요..</span>
+                    </SNeedsDecisionBtn>
+                  </SNeedsDecision>
+                ))}
+              </SNeeds>
+            </div>
+          </CollapseBody>
+        </CollapsePanel>
       </Collapse>
 
       <STitle> 지도 </STitle>
       <SMap>
         <Map
           center={{ lat: 36.4879, lng: 127.2611 }}
-          style={{ width: "100%", height: "360px" }}
+          style={{ width: "100%", height: "100%" }}
         >
           <MapMarker position={{ lat: 36.4879, lng: 127.2611 }}>
             <div style={{ color: "#000" }}>Hello DataMonsters!</div>
@@ -193,6 +200,7 @@ const SContent = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  background-color: ${(props) => props.theme.bgColor};
 `;
 
 const STitle = styled.div`
@@ -200,16 +208,44 @@ const STitle = styled.div`
   width: 95%;
   font-size: 20px;
   font-weight: 600;
+  color: ${(props) => props.theme.ftColor};
+`;
+
+// collapse
+const CollapsePanel = styled(Collapse.Panel)`
+  &&& {
+    border-radius: 8px;
+  }
+  background-color: ${(props) => props.theme.boxColor};
+  .ant-collapse-content {
+    color: ${(props) => props.theme.ftColor};
+    background-color: ${(props) => props.theme.boxColor};
+  }
+  .ant-collapse-header-text {
+    color: ${(props) => props.theme.ftColor};
+  }
+`;
+
+const CollapseBody = styled.div`
+  color: ${(props) => props.theme.ftColor};
+  background-color: ${(props) => props.theme.boxColor};
+  border-radius: 20px;
 `;
 
 // filter
-const SFilter = styled(BaseBox)`
-  width: 30%;
+const SFilter = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0px 20px;
+  padding: 10px 20px;
+  width: 40%;
   height: 80px;
   border: none;
 `;
 
 const SfilterTitle = styled.div`
+  width: 100px;
   border-right: 1px solid ${(props) => props.theme.borderColor};
   margin-right: 20px;
   padding-right: 20px;
@@ -221,7 +257,7 @@ const SFilterOption = styled.div`
 
 // needs
 const SNeeds = styled.div`
-  width: 70%;
+  width: 60%;
   display: flex;
   flex-direction: column;
 `;
@@ -236,7 +272,7 @@ const SNeedsDecision = styled.div`
 `;
 
 const SNeedsDecisionTitle = styled.span`
-  color: #576071;
+  color: ${(props) => props.theme.ftColor};
   font-weight: 600;
   line-height: 1.5;
   text-align: center;
