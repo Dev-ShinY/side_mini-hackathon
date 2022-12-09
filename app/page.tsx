@@ -2,12 +2,18 @@
 
 import styled from "styled-components";
 import { BaseBox } from "../components/shared";
-import { Collapse, Radio, Button } from "antd";
+import { Collapse, Radio, Button, message } from "antd";
 import type { RadioChangeEvent } from "antd";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Map, MapMarker } from "react-kakao-maps-sdk";
 import { gql } from "@apollo/client";
-import { useUpsertNeedsMutation } from "../src/utils/client";
+import "../styles/globals.css";
+import {
+  Restaurant,
+  useRecommendRestaurantsQuery,
+  useUpsertNeedsMutation,
+} from "../src/utils/client";
+import { ReactElement, JSXElementConstructor, ReactFragment, Key } from "react";
 
 gql`
   mutation upsertNeeds($input: UpdateNeedsInput!) {
@@ -16,7 +22,7 @@ gql`
       kor
       chn
       jpn
-      west
+      flour
     }
   }
 
@@ -26,7 +32,29 @@ gql`
       kor
       chn
       jpn
-      west
+      flour
+    }
+  }
+
+  query recommendRestaurants($input: RecommendRestaurantInput!) {
+    recommendRestaurants(input: $input) {
+      id
+      name
+      landAddress
+      roadAddress
+      type
+      lon
+      lat
+      dist
+      tags
+      beginTime
+      endTime
+      reviewRateAvg
+      reviewCount
+      thumbnailUrl
+      localRate
+      lastVisitAt
+      score
     }
   }
 `;
@@ -73,17 +101,85 @@ export default function Home() {
     { title: "분식", value: 0 },
   ]);
 
+  // map
+  const [mapLoaded, setMapLoaded] = useState<boolean>(false);
+  const [myMap, setMyMap] = useState();
+  const mapRef = useRef();
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_KEY}&autoload=false`;
+    document.head.appendChild(script);
+    script.addEventListener("load", () => setMapLoaded(true));
+  }, []);
+
+  useEffect(() => {
+    if (!mapLoaded) return;
+    window.kakao.maps.load(() => {
+      const mapContainer = document.getElementById("map");
+      const mapOption = {
+        center: new window.kakao.maps.LatLng(36.4879, 127.2611), // 지도의 중심좌표
+        level: 8, // 지도의 확대 레벨
+      };
+      var map = new window.kakao.maps.Map(mapContainer as any, mapOption);
+      setMyMap(map);
+    });
+  }, [mapLoaded]);
+
   // apollo
-  const [upsertNeeds, { loading }] = useUpsertNeedsMutation();
+  const [upsertNeeds] = useUpsertNeedsMutation();
+  const [recommendRestaurants, setRecommendRestaurants] =
+    useState<Restaurant>();
+  const [restaurantIndex, setRestaurantIndex] = useState(1);
+
+  const { refetch: refetchRecommend } = useRecommendRestaurantsQuery({
+    variables: {
+      input: {
+        date:
+          new Date().getFullYear() +
+          "-" +
+          ("0" + (new Date().getMonth() + 1)).slice(-2) +
+          "-" +
+          ("0" + new Date().getDate()).slice(-2),
+        startIndex: (restaurantIndex - 1) * 5,
+      },
+    },
+    onCompleted(data) {
+      setRecommendRestaurants((data as any).recommendRestaurants);
+
+      for (var i = 0; i < recommendRestaurants.length; i++) {
+        var marker = new kakao.maps.Marker({
+          map: myMap,
+          position: new kakao.maps.LatLng(
+            recommendRestaurants[i].lon,
+            recommendRestaurants[i].lat
+          ),
+          title: recommendRestaurants[i].name,
+        });
+      }
+    },
+  });
+
+  useEffect(() => {
+    refetchRecommend();
+  }, [refetchRecommend, restaurantIndex]);
+
   return (
     <SContent>
       <STitle> Filter </STitle>
-      <Collapse style={{ width: "95%" }} defaultActiveKey={["1"]}>
+      <Collapse
+        style={{ width: "95%" }}
+        defaultActiveKey={["1"]}
+        onChange={() => {
+          // const map = mapRef.current;
+          // if (map) map.relayout();
+        }}
+      >
         <CollapsePanel header="Filter" key="1">
           <CollapseBody>
             <div style={{ display: "flex", flexDirection: "row" }}>
               {/* filter */}
-              <SFilter>
+              {/* <SFilter>
                 <SfilterTitle>옵션</SfilterTitle>
                 <SFilterOption>
                   <Radio.Group
@@ -101,11 +197,11 @@ export default function Home() {
                     value={placeType}
                   />
                 </SFilterOption>
-              </SFilter>
+              </SFilter> */}
 
               {/* needs */}
               <SNeeds>
-                {needsList.map((item) => (
+                {needsList.map((item: { title: string; value: number }) => (
                   <SNeedsDecision key={item.title}>
                     <SNeedsDecisionTitle>{item.title}</SNeedsDecisionTitle>
 
@@ -216,7 +312,7 @@ export default function Home() {
                         jpn: needsList.filter(function (item) {
                           return item.title === "일식";
                         })[0].value,
-                        west: needsList.filter(function (item) {
+                        flour: needsList.filter(function (item) {
                           return item.title === "분식";
                         })[0].value,
                       },
@@ -225,6 +321,7 @@ export default function Home() {
                       console.log("success!!", data);
                     },
                   });
+                  message.info("success!!");
                 }}
               >
                 Submit
@@ -235,16 +332,68 @@ export default function Home() {
       </Collapse>
 
       <STitle> 지도 </STitle>
-      <SMap>
-        <Map
+      <SMapContainer>
+        {/* 식당 리스트 */}
+        <SMapPoints>
+          <Button
+            onClick={() => {
+              if (restaurantIndex > 1) {
+                setRestaurantIndex((body) => body - 1);
+              }
+            }}
+          >
+            △
+          </Button>
+          {recommendRestaurants &&
+            recommendRestaurants?.map(
+              (
+                item: { type: string; id: number; name: string },
+                index: number
+              ) => {
+                return (
+                  <SMapPoint key={item.id}>
+                    {(restaurantIndex - 1) * 5 + index + 1}. {item.name}(
+                    {item.type})
+                  </SMapPoint>
+                );
+              }
+            )}
+          <Button
+            onClick={() => {
+              setRestaurantIndex((body) => body + 1);
+            }}
+          >
+            ▽
+          </Button>
+        </SMapPoints>
+        {/* 지도 */}
+        <div
+          id="map"
+          style={{ width: "70%", height: "100%" }}
+          // ref={mapRef}
+        ></div>
+        {/* <Map
           center={{ lat: 36.4879, lng: 127.2611 }}
           style={{ width: "100%", height: "100%" }}
+          id="map"
         >
           <MapMarker position={{ lat: 36.4879, lng: 127.2611 }}>
             <div style={{ color: "#000" }}>Hello DataMonsters!</div>
           </MapMarker>
-        </Map>
-      </SMap>
+          {recommendRestaurants?.map(
+            (item: { lat: number; lon: number; id: number; name: any }) => {
+              return (
+                <MapMarker
+                  key={item.id}
+                  position={{ lat: item.lat, lng: item.lon }}
+                >
+                  <div style={{ color: "#000" }}>{item.name}</div>
+                </MapMarker>
+              );
+            }
+          )}
+        </Map> */}
+      </SMapContainer>
     </SContent>
   );
 }
@@ -354,6 +503,11 @@ const SMapContainer = styled(BaseBox)`
   border-radius: 10px;
 `;
 
-const SMapPointList = styled.div`
+const SMapPoints = styled.div`
   width: 30%;
+  color: ${(props) => props.theme.ftColor};
+`;
+
+const SMapPoint = styled.div`
+  margin: 15px 0;
 `;

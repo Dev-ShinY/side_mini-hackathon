@@ -1,7 +1,6 @@
 "use client";
 
 import "../styles/globals.css";
-import Script from "next/script";
 import { darkTheme, lightTheme } from "../styles/theme-style";
 import { ThemeProvider } from "styled-components";
 import Header from "../components/Header";
@@ -16,17 +15,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const kakaoKey = process.env.NEXT_PUBLIC_KAKAO_KEY;
   const darkMode = useReactiveVar(darkModeVar);
 
   return (
     <html>
-      <head>
-        <script
-          type="text/javascript"
-          src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&libraries=services`}
-        />
-      </head>
+      <head />
       <body>
         <ApolloProvider client={client}>
           <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>

@@ -5,20 +5,21 @@ export type MutationFieldPolicy = {
 	updateRestaurant?: FieldPolicy<any> | FieldReadFunction<any>,
 	upsertNeeds?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type NeedsKeySpecifier = ('chn' | 'date' | 'jpn' | 'kor' | 'west' | NeedsKeySpecifier)[];
+export type NeedsKeySpecifier = ('chn' | 'date' | 'flour' | 'jpn' | 'kor' | NeedsKeySpecifier)[];
 export type NeedsFieldPolicy = {
 	chn?: FieldPolicy<any> | FieldReadFunction<any>,
 	date?: FieldPolicy<any> | FieldReadFunction<any>,
+	flour?: FieldPolicy<any> | FieldReadFunction<any>,
 	jpn?: FieldPolicy<any> | FieldReadFunction<any>,
-	kor?: FieldPolicy<any> | FieldReadFunction<any>,
-	west?: FieldPolicy<any> | FieldReadFunction<any>
+	kor?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type QueryKeySpecifier = ('getNeeds' | 'getRestaurantByName' | QueryKeySpecifier)[];
+export type QueryKeySpecifier = ('getNeeds' | 'getRestaurantByName' | 'recommendRestaurants' | QueryKeySpecifier)[];
 export type QueryFieldPolicy = {
 	getNeeds?: FieldPolicy<any> | FieldReadFunction<any>,
-	getRestaurantByName?: FieldPolicy<any> | FieldReadFunction<any>
+	getRestaurantByName?: FieldPolicy<any> | FieldReadFunction<any>,
+	recommendRestaurants?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type RestaurantKeySpecifier = ('beginTime' | 'dist' | 'endTime' | 'id' | 'landAddress' | 'lastVisitAt' | 'lat' | 'localRate' | 'lon' | 'name' | 'reviewCount' | 'reviewRateAvg' | 'roadAddress' | 'tags' | 'thumbnailUrl' | 'type' | RestaurantKeySpecifier)[];
+export type RestaurantKeySpecifier = ('beginTime' | 'dist' | 'endTime' | 'id' | 'landAddress' | 'lastVisitAt' | 'lat' | 'localRate' | 'lon' | 'name' | 'reviewCount' | 'reviewRateAvg' | 'roadAddress' | 'score' | 'tags' | 'thumbnailUrl' | 'type' | RestaurantKeySpecifier)[];
 export type RestaurantFieldPolicy = {
 	beginTime?: FieldPolicy<any> | FieldReadFunction<any>,
 	dist?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -33,6 +34,7 @@ export type RestaurantFieldPolicy = {
 	reviewCount?: FieldPolicy<any> | FieldReadFunction<any>,
 	reviewRateAvg?: FieldPolicy<any> | FieldReadFunction<any>,
 	roadAddress?: FieldPolicy<any> | FieldReadFunction<any>,
+	score?: FieldPolicy<any> | FieldReadFunction<any>,
 	tags?: FieldPolicy<any> | FieldReadFunction<any>,
 	thumbnailUrl?: FieldPolicy<any> | FieldReadFunction<any>,
 	type?: FieldPolicy<any> | FieldReadFunction<any>

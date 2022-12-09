@@ -15,9 +15,10 @@ export default function Header() {
   return (
     <SHeader>
       오늘 뭐 먹지
-      <DarkModeBtn onClick={darkMode ? disableDarkMode : enableDarkMode}>
-        <FontAwesomeIcon icon={darkMode ? faSun : faMoon} />
-      </DarkModeBtn>
+      <FontAwesomeIcon
+        icon={darkMode ? faSun : faMoon}
+        onClick={darkMode ? disableDarkMode : enableDarkMode}
+      />
     </SHeader>
   );
 }

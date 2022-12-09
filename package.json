@@ -35,7 +35,9 @@
     "@graphql-codegen/client-preset": "^1.2.3",
     "@graphql-codegen/typescript-apollo-client-helpers": "^2.2.6",
     "@graphql-codegen/typescript-react-apollo": "^3.3.7",
+    "@zeit/next-css": "^1.0.1",
     "add": "^2.0.6",
+    "babel-plugin-styled-components": "^2.0.7",
     "yarn": "^1.22.19"
   }
 }

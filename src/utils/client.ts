@@ -59,15 +59,16 @@ export type Needs = {
   __typename?: 'Needs';
   chn: Scalars['Float'];
   date: Scalars['String'];
+  flour: Scalars['Float'];
   jpn: Scalars['Float'];
   kor: Scalars['Float'];
-  west: Scalars['Float'];
 };
 
 export type Query = {
   __typename?: 'Query';
   getNeeds?: Maybe<Needs>;
   getRestaurantByName?: Maybe<Restaurant>;
+  recommendRestaurants?: Maybe<Array<Restaurant>>;
 };
 
 
@@ -78,6 +79,16 @@ export type QueryGetNeedsArgs = {
 
 export type QueryGetRestaurantByNameArgs = {
   input: Scalars['String'];
+};
+
+
+export type QueryRecommendRestaurantsArgs = {
+  input: RecommendRestaurantInput;
+};
+
+export type RecommendRestaurantInput = {
+  date: Scalars['String'];
+  startIndex?: Scalars['Float'];
 };
 
 export type Restaurant = {
@@ -95,6 +106,7 @@ export type Restaurant = {
   reviewCount?: Maybe<Scalars['Float']>;
   reviewRateAvg?: Maybe<Scalars['Float']>;
   roadAddress?: Maybe<Scalars['String']>;
+  score?: Maybe<Scalars['Float']>;
   tags?: Maybe<Scalars['String']>;
   thumbnailUrl?: Maybe<Scalars['String']>;
   type?: Maybe<Scalars['String']>;
@@ -103,9 +115,9 @@ export type Restaurant = {
 export type UpdateNeedsInput = {
   chn?: InputMaybe<Scalars['Float']>;
   date?: InputMaybe<Scalars['String']>;
+  flour?: InputMaybe<Scalars['Float']>;
   jpn?: InputMaybe<Scalars['Float']>;
   kor?: InputMaybe<Scalars['Float']>;
-  west?: InputMaybe<Scalars['Float']>;
 };
 
 export type UpdateRestaurantInput = {
@@ -132,14 +144,21 @@ export type UpsertNeedsMutationVariables = Exact<{
 }>;
 
 
-export type UpsertNeedsMutation = { __typename?: 'Mutation', upsertNeeds: { __typename?: 'Needs', date: string, kor: number, chn: number, jpn: number, west: number } };
+export type UpsertNeedsMutation = { __typename?: 'Mutation', upsertNeeds: { __typename?: 'Needs', date: string, kor: number, chn: number, jpn: number, flour: number } };
 
 export type GetNeedsQueryVariables = Exact<{
   input: Scalars['String'];
 }>;
 
 
-export type GetNeedsQuery = { __typename?: 'Query', getNeeds?: { __typename?: 'Needs', date: string, kor: number, chn: number, jpn: number, west: number } | null };
+export type GetNeedsQuery = { __typename?: 'Query', getNeeds?: { __typename?: 'Needs', date: string, kor: number, chn: number, jpn: number, flour: number } | null };
+
+export type RecommendRestaurantsQueryVariables = Exact<{
+  input: RecommendRestaurantInput;
+}>;
+
+
+export type RecommendRestaurantsQuery = { __typename?: 'Query', recommendRestaurants?: Array<{ __typename?: 'Restaurant', id: number, name: string, landAddress?: string | null, roadAddress?: string | null, type?: string | null, lon?: number | null, lat?: number | null, dist?: number | null, tags?: string | null, beginTime?: string | null, endTime?: string | null, reviewRateAvg?: number | null, reviewCount?: number | null, thumbnailUrl?: string | null, localRate?: number | null, lastVisitAt?: string | null, score?: number | null }> | null };
 
 
 export const UpsertNeedsDocument = gql`
@@ -149,7 +168,7 @@ export const UpsertNeedsDocument = gql`
     kor
     chn
     jpn
-    west
+    flour
   }
 }
     `;
@@ -186,7 +205,7 @@ export const GetNeedsDocument = gql`
     kor
     chn
     jpn
-    west
+    flour
   }
 }
     `;
@@ -218,3 +237,54 @@ export function useGetNeedsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetNeedsQueryHookResult = ReturnType<typeof useGetNeedsQuery>;
 export type GetNeedsLazyQueryHookResult = ReturnType<typeof useGetNeedsLazyQuery>;
 export type GetNeedsQueryResult = Apollo.QueryResult<GetNeedsQuery, GetNeedsQueryVariables>;
+export const RecommendRestaurantsDocument = gql`
+    query recommendRestaurants($input: RecommendRestaurantInput!) {
+  recommendRestaurants(input: $input) {
+    id
+    name
+    landAddress
+    roadAddress
+    type
+    lon
+    lat
+    dist
+    tags
+    beginTime
+    endTime
+    reviewRateAvg
+    reviewCount
+    thumbnailUrl
+    localRate
+    lastVisitAt
+    score
+  }
+}
+    `;
+
+/**
+ * __useRecommendRestaurantsQuery__
+ *
+ * To run a query within a React component, call `useRecommendRestaurantsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRecommendRestaurantsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRecommendRestaurantsQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRecommendRestaurantsQuery(baseOptions: Apollo.QueryHookOptions<RecommendRestaurantsQuery, RecommendRestaurantsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<RecommendRestaurantsQuery, RecommendRestaurantsQueryVariables>(RecommendRestaurantsDocument, options);
+      }
+export function useRecommendRestaurantsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RecommendRestaurantsQuery, RecommendRestaurantsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<RecommendRestaurantsQuery, RecommendRestaurantsQueryVariables>(RecommendRestaurantsDocument, options);
+        }
+export type RecommendRestaurantsQueryHookResult = ReturnType<typeof useRecommendRestaurantsQuery>;
+export type RecommendRestaurantsLazyQueryHookResult = ReturnType<typeof useRecommendRestaurantsLazyQuery>;
+export type RecommendRestaurantsQueryResult = Apollo.QueryResult<RecommendRestaurantsQuery, RecommendRestaurantsQueryVariables>;
