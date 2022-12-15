@@ -24,6 +24,8 @@ export const disableDarkMode = () => {
   }
 };
 
+export const restaurantIndex = makeVar(Number(0));
+
 const httpLink = createHttpLink({
   uri: process.env.NEXT_PUBLIC_APOLLO_ULI,
 });
