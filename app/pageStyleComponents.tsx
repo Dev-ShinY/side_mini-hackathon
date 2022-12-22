@@ -44,7 +44,7 @@ export const MapPoint = ({ children }: Props) => {
 
 const STitle = styled.div`
   margin: 10px 0;
-  width: 95%;
+  width: 90%;
   font-size: 20px;
   font-weight: 600;
   color: ${(props) => props.theme.ftColor};

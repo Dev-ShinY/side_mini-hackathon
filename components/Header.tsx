@@ -1,5 +1,5 @@
-"use client";
-import styled from "styled-components";
+import clsx from "clsx";
+import "../styles/clsx-class.scss";
 import { faSun, faMoon } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -13,28 +13,22 @@ export default function Header() {
   const darkMode = useReactiveVar(darkModeVar);
 
   return (
-    <SHeader>
+    <div
+      className={clsx([
+        "w100",
+        "pa-2",
+        "f800",
+        "flex-s-b",
+        "WBoxColor",
+        "WBorderColor",
+        "WFtColor",
+      ])}
+    >
       오늘 뭐 먹지
       <FontAwesomeIcon
         icon={darkMode ? faSun : faMoon}
         onClick={darkMode ? disableDarkMode : enableDarkMode}
       />
-    </SHeader>
+    </div>
   );
 }
-
-const SHeader = styled.div`
-  width: 100%;
-  background-color: ${(props) => props.theme.boxColor};
-  padding: 20px;
-  border-bottom: 1px solid ${(props) => props.theme.borderColor};
-  color: ${(props) => props.theme.ftColor};
-  display: flex;
-  font-weight: 800;
-  display: flex;
-  justify-content: space-between;
-`;
-
-const DarkModeBtn = styled.span`
-  cursor: pointer;
-`;

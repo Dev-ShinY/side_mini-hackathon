@@ -1,6 +1,6 @@
-import "../styles/globals.css";
-
-import { Title, MapContainer } from "./pageStyleComponents";
+"use client";
+import clsx from "clsx";
+import "../styles/clsx-class.scss";
 import { CollapseComponents } from "./CollapseComponents";
 import { MapComponents } from "./MapComponents";
 import { Suspense } from "react";
@@ -18,17 +18,26 @@ export default function Home() {
       }}
     >
       {/* filter */}
-      <Title> Filter </Title>
+      <div className={clsx(["w90", "mt-1", "mb-1", "f20", "f800"])}>Filter</div>
       <Suspense fallback={<p>Loading Filter...</p>}>
         <CollapseComponents />
       </Suspense>
 
       {/* map */}
-      <Title> 지도 </Title>
+      <div className={clsx(["w90", "mt-1", "mb-1", "f20", "f800"])}> 지도 </div>
       <Suspense fallback={<p>Loading Map...</p>}>
-        <MapContainer>
+        <div
+          className={clsx([
+            "flex-row",
+            "w90",
+            "h100",
+            "WBorderColor",
+            "pa-2",
+            "border-radius-1",
+          ])}
+        >
           <MapComponents />
-        </MapContainer>
+        </div>
       </Suspense>
     </div>
   );

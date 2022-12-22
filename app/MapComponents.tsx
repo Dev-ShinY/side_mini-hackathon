@@ -1,70 +1,126 @@
 "use client";
-import { MapPoints } from "./pageStyleComponents";
+import clsx from "clsx";
+import "../styles/clsx-class.scss";
 import { Button } from "antd";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { gql } from "@apollo/client";
+import { Restaurant, useRecommendRestaurantsQuery } from "../src/utils/client";
+import { Map, MapMarker } from "react-kakao-maps-sdk";
+
+gql`
+  query recommendRestaurants($input: RecommendRestaurantInput!) {
+    recommendRestaurants(input: $input) {
+      id
+      name
+      landAddress
+      roadAddress
+      type
+      lon
+      lat
+      dist
+      tags
+      beginTime
+      endTime
+      reviewRateAvg
+      reviewCount
+      thumbnailUrl
+      localRate
+      lastVisitAt
+      score
+    }
+  }
+`;
 
 export function MapComponents() {
   // map
-  const [mapLoaded, setMapLoaded] = useState<boolean>(false);
   const [restaurantIndex, setRestaurantIndex] = useState(1);
+  const [recommendRestaurants, setRecommendRestaurants] =
+    useState<Restaurant>();
 
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_KEY}&autoload=false`;
-    document.head.appendChild(script);
-    script.addEventListener("load", () => setMapLoaded(true));
-  }, []);
-
-  useEffect(() => {
-    if (!mapLoaded) return;
-    window.kakao.maps.load(() => {
-      const mapContainer = document.getElementById("map");
-      const mapOption = {
-        center: new window.kakao.maps.LatLng(36.4879, 127.2611), // 지도의 중심좌표
-        level: 8, // 지도의 확대 레벨
-      };
-      var map = new window.kakao.maps.Map(mapContainer as any, mapOption);
+  const { loading: loadingRecommend, refetch: refetchRecommend } =
+    useRecommendRestaurantsQuery({
+      variables: {
+        input: {
+          date: "2022-12-09",
+          // new Date().getFullYear() +
+          // "-" +
+          // ("0" + (new Date().getMonth() + 1)).slice(-2) +
+          // "-" +
+          // ("0" + new Date().getDate()).slice(-2),
+          startIndex: (restaurantIndex - 1) * 5,
+        },
+      },
+      onCompleted(data) {
+        setRecommendRestaurants((data as any).recommendRestaurants);
+      },
     });
-  }, [mapLoaded]);
+
+  useEffect(() => {
+    refetchRecommend();
+  }, [refetchRecommend, restaurantIndex]);
+
+  const mapRef = useRef();
 
   return (
     <>
       {/* 식당 리스트 */}
-      <MapPoints>
+      <div className={clsx(["w30", "flex-column", "flex-s-b", "mr-2"])}>
         <Button
           onClick={() => {
+            const map = mapRef.current;
+            if (map) (map as any).relayout();
             if (restaurantIndex > 1) {
               setRestaurantIndex((body) => body - 1);
             }
           }}
+          loading={loadingRecommend}
         >
           △
         </Button>
-        {/* {recommendRestaurants &&
-            recommendRestaurants?.map(
-              (
-                item: { type: string; id: number; name: string },
-                index: number
-              ) => {
-                return (
-                  <SMapPoint key={item.id}>
-                    {(restaurantIndex - 1) * 5 + index + 1}. {item.name}(
-                    {item.type})
-                  </SMapPoint>
-                );
-              }
-            )} */}
+        {recommendRestaurants &&
+          recommendRestaurants?.map(
+            (
+              item: { type: string; id: number; name: string },
+              index: number
+            ) => {
+              return (
+                <div key={item.id}>
+                  {(restaurantIndex - 1) * 5 + index + 1}. {item.name}(
+                  {item.type})
+                </div>
+              );
+            }
+          )}
         <Button
           onClick={() => {
+            const map = mapRef.current;
+            if (map) (map as any).relayout();
             setRestaurantIndex((body) => body + 1);
           }}
+          loading={loadingRecommend}
         >
           ▽
         </Button>
-      </MapPoints>
+      </div>
 
       {/* 지도 */}
-      <div id="map" style={{ width: "70%", height: "100%" }}></div>
+      <Map
+        center={{ lat: 36.4879, lng: 127.2611 }}
+        style={{ width: "100%", height: "100%" }}
+        id="map"
+      >
+        {recommendRestaurants?.map((item: any) => {
+          return (
+            <MapMarker
+              key={item.id}
+              position={{ lat: item.lon, lng: item.lat }}
+              title={item.name}
+            >
+              <div>{item.name}</div>
+            </MapMarker>
+          );
+        })}
+      </Map>
     </>
   );
 }

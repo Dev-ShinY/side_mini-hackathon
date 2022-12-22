@@ -1,20 +1,13 @@
 "use client";
+
+import clsx from "clsx";
+import "../styles/clsx-class.scss";
 import { ApolloProvider } from "@apollo/client";
 import { Button, Collapse, Radio, RadioChangeEvent } from "antd";
 import { useState } from "react";
 import styled from "styled-components";
 import { SubmitBtn } from "./SubmitBtn";
-import {
-  Filter,
-  FilterTitle,
-  FilterOption,
-  Needs,
-  NeedsDecision,
-  NeedsDecisionTitle,
-  NeedsDecisionBtn,
-} from "./pageStyleComponents";
 import { client } from "../src/utils/apollo";
-import { Restaurant } from "../src/utils/client";
 
 export function CollapseComponents() {
   const [lunchType, setLunchType] = useState("lunch");
@@ -60,7 +53,7 @@ export function CollapseComponents() {
 
   return (
     <Collapse
-      style={{ width: "95%" }}
+      style={{ width: "90%" }}
       defaultActiveKey={["1"]}
       onChange={() => {
         // const map = mapRef.current;
@@ -71,9 +64,9 @@ export function CollapseComponents() {
         <CollapseBody>
           <div style={{ display: "flex", flexDirection: "row" }}>
             {/* filter */}
-            <Filter>
-              <FilterTitle>옵션</FilterTitle>
-              <FilterOption>
+            <div className={clsx(["w40", "pa-2", "flex-s-b"])}>
+              <div className={clsx(["w50", "pr-2", "mr-2"])}>옵션</div>
+              <div className={clsx(["w50"])}>
                 <Radio.Group
                   options={optionsLunchType}
                   onChange={onChangeLunchType}
@@ -81,23 +74,35 @@ export function CollapseComponents() {
                   style={{ marginRight: "20px" }}
                   value={lunchType}
                 />
-
                 <Radio.Group
                   options={optionsPlaceType}
                   onChange={onChangePlaceType}
                   optionType="button"
                   value={placeType}
                 />
-              </FilterOption>
-            </Filter>
+              </div>
+            </div>
 
             {/* needs */}
-            <Needs>
+            <div className={clsx(["w60", "h100"])}>
               {needsList.map((item: { title: string; value: number }) => (
-                <NeedsDecision key={item.title}>
-                  <NeedsDecisionTitle>{item.title}</NeedsDecisionTitle>
+                <div
+                  className={clsx(["mr-2", "w100", "flex-center"])}
+                  key={item.title}
+                >
+                  <div
+                    className={clsx([
+                      "mb-1",
+                      "pr-2",
+                      "f24",
+                      "f800",
+                      "border-r",
+                    ])}
+                  >
+                    {item.title}
+                  </div>
 
-                  <NeedsDecisionBtn>
+                  <div className={clsx(["w50", "flex-s-e"])}>
                     <span>별론데..</span>
                     <Button
                       value={-2}
@@ -175,10 +180,10 @@ export function CollapseComponents() {
                       }
                     />
                     <span>사랑해요..</span>
-                  </NeedsDecisionBtn>
-                </NeedsDecision>
+                  </div>
+                </div>
               ))}
-            </Needs>
+            </div>
 
             <ApolloProvider client={client}>
               <SubmitBtn needsList={needsList} />
